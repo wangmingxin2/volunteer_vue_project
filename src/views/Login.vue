@@ -94,6 +94,13 @@ const roleToTypeId = {
   volunteer: '3',
 }
 
+// 角色映射到路由路径
+const roleToRoute = {
+  admin: '/admin',
+  organization: '/organization',
+  volunteer: '/volunteer',
+}
+
 const handleLogin = async () => {
   if (!loginFormRef.value) return
 
@@ -123,27 +130,18 @@ const handleLogin = async () => {
           localStorage.setItem('userId', res.data.userId.toString())
           localStorage.setItem('username', res.data.username)
 
+          // 保存选择的角色到本地存储，用于路由守卫判断
+          localStorage.setItem('role', loginForm.role)
+
           // 如果选择了记住我，可以设置更长的过期时间
           if (rememberMe.value) {
-            // 这里可以实现记住我的逻辑
+            // 设置记住我的逻辑
           }
 
           ElMessage.success('登录成功')
 
-          // 根据角色跳转到不同的页面
-          switch (loginForm.role) {
-            case 'admin':
-              router.push('/admin')
-              break
-            case 'organization':
-              router.push('/organization')
-              break
-            case 'volunteer':
-              router.push('/volunteer')
-              break
-            default:
-              router.push('/')
-          }
+          // 根据选择的角色跳转到对应页面
+          router.push(roleToRoute[loginForm.role as keyof typeof roleToRoute] || '/')
         } else {
           ElMessage.error(res.message || '登录失败')
         }
