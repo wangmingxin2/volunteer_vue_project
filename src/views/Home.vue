@@ -23,7 +23,9 @@
           </div>
           <ul class="announcement-list">
             <li v-for="item in announcements" :key="item.announcementId" class="announcement-item">
-              <span class="announcement-title">{{ item.title }}</span>
+              <el-tooltip :content="item.title" placement="top" :show-after="500">
+                <span class="announcement-title">{{ item.title }}</span>
+              </el-tooltip>
               <span class="announcement-date">{{ formatDate(item.createdTime) }}</span>
             </li>
           </ul>
@@ -40,11 +42,21 @@
 
         <div class="right-section">
           <div class="section-header">
-            <h2>热门项目</h2>
+            <h2>组织排行榜</h2>
           </div>
-          <div class="placeholder-content">
-            <!-- 这里可以放置其他组件 -->
-            <p>这里可以放置热门项目、统计数据或其他内容</p>
+          <div class="org-ranking">
+            <el-skeleton :rows="5" animated v-if="loading" />
+            <ul class="org-list" v-else>
+              <li v-for="(org, index) in topOrganizations" :key="org.orgId" class="org-item">
+                <div class="org-rank">{{ index + 1 }}</div>
+                <el-avatar :size="40" :src="org.logo" class="org-avatar" />
+                <div class="org-info">
+                  <div class="org-name">{{ org.orgName }}</div>
+                  <div class="org-desc">{{ org.description }}</div>
+                  <div class="org-count">志愿者: {{ org.count }}人</div>
+                </div>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -54,42 +66,26 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
 import { PictureFilled } from '@element-plus/icons-vue'
-
-interface Banner {
-  bannerId: number
-  title: string
-  imageUrl: string
-  description: string | null
-  bannerType: number
-  status: number
-  createdBy: string | null
-  createdTime: string
-  updatedBy: string | null
-  updatedTime: string
-  deleted: number
-}
-
-interface Announcement {
-  announcementId: number
-  title: string
-  createdTime: string
-  // ... 其他属性
-}
+import { getTopOrganizations } from '../api/organization'
+import type { Organization } from '../api/organization'
+import { getBanners } from '../api/banner'
+import type { Banner } from '../api/banner'
+import { getAnnouncementPage } from '../api/announcement'
+import type { Announcement } from '../api/announcement'
 
 const banners = ref<Banner[]>([])
 const announcements = ref<Announcement[]>([])
 const currentPage = ref(1)
-const pageSize = ref(5)
+const pageSize = ref(10)
 const total = ref(0)
+const topOrganizations = ref<Organization[]>([])
+const loading = ref(true)
 
 const fetchBanners = async () => {
   try {
-    const response = await axios.get('http://localhost:8080/banner')
-    if (response.data.code === 200) {
-      banners.value = response.data.data
-    }
+    const res = await getBanners()
+    banners.value = res.data
   } catch (error) {
     console.error('获取轮播图数据失败:', error)
   }
@@ -97,19 +93,23 @@ const fetchBanners = async () => {
 
 const fetchAnnouncements = async (page: number) => {
   try {
-    const response = await axios.get('http://localhost:8080/announcement/page', {
-      params: {
-        status: 0,
-        page: page,
-        size: pageSize.value,
-      },
-    })
-    if (response.data.code === 200) {
-      announcements.value = response.data.data.records
-      total.value = response.data.data.total
-    }
+    const res = await getAnnouncementPage(page, pageSize.value)
+    announcements.value = res.data.records
+    total.value = res.data.total
   } catch (error) {
     console.error('获取公告数据失败:', error)
+  }
+}
+
+const fetchTopOrganizations = async () => {
+  try {
+    loading.value = true
+    const res = await getTopOrganizations()
+    topOrganizations.value = res.data
+  } catch (error) {
+    console.error('获取组织排行榜失败:', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -126,6 +126,7 @@ const formatDate = (dateString: string) => {
 onMounted(() => {
   fetchBanners()
   fetchAnnouncements(1)
+  fetchTopOrganizations()
 })
 </script>
 
@@ -155,6 +156,7 @@ onMounted(() => {
   min-height: 400px;
   display: flex;
   flex-direction: column;
+  width: 0; /* 防止内容撑开容器 */
 }
 
 .right-section {
@@ -164,14 +166,7 @@ onMounted(() => {
   border-radius: 4px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   min-height: 400px;
-}
-
-.placeholder-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  color: #909399;
+  width: 0; /* 防止内容撑开容器 */
 }
 
 .section-header {
@@ -205,6 +200,7 @@ onMounted(() => {
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-right: 15px;
+  cursor: pointer;
 }
 
 .announcement-date {
@@ -242,5 +238,83 @@ onMounted(() => {
   margin-top: 20px;
   display: flex;
   justify-content: center;
+}
+
+.org-ranking {
+  padding: 10px 0;
+}
+
+.org-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.org-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 15px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.org-rank {
+  width: 24px;
+  height: 24px;
+  background-color: #f0f0f0;
+  color: #666;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.org-item:nth-child(1) .org-rank {
+  background-color: #f5c518;
+  color: white;
+}
+
+.org-item:nth-child(2) .org-rank {
+  background-color: #c0c0c0;
+  color: white;
+}
+
+.org-item:nth-child(3) .org-rank {
+  background-color: #cd7f32;
+  color: white;
+}
+
+.org-avatar {
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.org-info {
+  flex: 1;
+  min-width: 0; /* 防止内容撑开容器 */
+}
+
+.org-name {
+  font-weight: bold;
+  margin-bottom: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.org-desc {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.org-count {
+  font-size: 14px;
+  color: #999;
 }
 </style>
