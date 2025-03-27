@@ -6,11 +6,7 @@ import OrganizationLayout from '../layouts/OrganizationLayout.vue'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
-import AdminDashboard from '../views/AdminDashboard.vue'
-import VolunteerHome from '../views/VolunteerHome.vue'
-import OrganizationHome from '../views/OrganizationHome.vue'
-import Projects from '../views/Projects.vue'
-import Organizations from '../views/Organizations.vue'
+import UserProfile from '../views/UserProfile.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,12 +23,12 @@ const router = createRouter({
         {
           path: 'projects',
           name: 'projects',
-          component: Projects,
+          component: () => import('../views/Projects.vue'),
         },
         {
           path: 'organizations',
           name: 'organizations',
-          component: Organizations,
+          component: () => import('../views/Organizations.vue'),
         },
       ],
     },
@@ -58,9 +54,61 @@ const router = createRouter({
         {
           path: 'dashboard',
           name: 'admin-dashboard',
-          component: AdminDashboard,
+          component: () => import('../views/admin/Dashboard.vue'),
         },
-        // 可以添加更多管理页面路由
+        {
+          path: 'profile',
+          name: 'admin-profile',
+          component: UserProfile,
+        },
+        {
+          path: 'users',
+          name: 'admin-users',
+          component: () => import('../views/admin/Users.vue'),
+          meta: { title: '用户管理' },
+        },
+        {
+          path: 'volunteers',
+          name: 'admin-volunteers',
+          component: () => import('../views/admin/Volunteers.vue'),
+          meta: { title: '志愿者管理' },
+        },
+        {
+          path: 'organizations',
+          name: 'admin-organizations',
+          component: () => import('../views/admin/Organizations.vue'),
+          meta: { title: '组织管理' },
+        },
+        {
+          path: 'project-categories',
+          name: 'admin-project-categories',
+          component: () => import('../views/admin/ProjectCategories.vue'),
+          meta: { title: '项目分类' },
+        },
+        {
+          path: 'announcements',
+          name: 'admin-announcements',
+          component: () => import('../views/admin/Announcements.vue'),
+          meta: { title: '公告管理' },
+        },
+        {
+          path: 'banners',
+          name: 'admin-banners',
+          component: () => import('../views/admin/Banners.vue'),
+          meta: { title: '轮播图管理' },
+        },
+        {
+          path: 'statistics',
+          name: 'admin-statistics',
+          component: () => import('../views/admin/Statistics.vue'),
+          meta: { title: '统计分析' },
+        },
+        {
+          path: 'settings',
+          name: 'admin-settings',
+          component: () => import('../views/admin/Settings.vue'),
+          meta: { title: '系统设置' },
+        },
       ],
     },
     {
@@ -75,9 +123,25 @@ const router = createRouter({
         {
           path: 'home',
           name: 'volunteer-home',
-          component: VolunteerHome,
+          component: () => import('../views/volunteer/Home.vue'),
         },
-        // 可以添加更多志愿者页面路由
+        {
+          path: 'profile',
+          name: 'volunteer-profile',
+          component: UserProfile,
+        },
+        {
+          path: 'projects',
+          name: 'volunteer-projects',
+          component: () => import('../views/volunteer/Projects.vue'),
+          meta: { title: '志愿项目' },
+        },
+        {
+          path: 'activities',
+          name: 'volunteer-activities',
+          component: () => import('../views/volunteer/Activities.vue'),
+          meta: { title: '我的活动' },
+        },
       ],
     },
     {
@@ -92,9 +156,25 @@ const router = createRouter({
         {
           path: 'home',
           name: 'organization-home',
-          component: OrganizationHome,
+          component: () => import('../views/organization/Home.vue'),
         },
-        // 可以添加更多组织页面路由
+        {
+          path: 'profile',
+          name: 'organization-profile',
+          component: UserProfile,
+        },
+        {
+          path: 'projects',
+          name: 'organization-projects',
+          component: () => import('../views/organization/Projects.vue'),
+          meta: { title: '项目管理' },
+        },
+        {
+          path: 'volunteers',
+          name: 'organization-volunteers',
+          component: () => import('../views/organization/Volunteers.vue'),
+          meta: { title: '志愿者管理' },
+        },
       ],
     },
   ],
@@ -102,12 +182,12 @@ const router = createRouter({
 
 // 路由守卫
 router.beforeEach((to, from, next) => {
-  const token = localStorage.getItem('token')
+  const satoken = localStorage.getItem('satoken')
   const role = localStorage.getItem('role')
 
-  if (to.meta.requiresAuth && !token) {
+  if (to.meta.requiresAuth && !satoken) {
     next('/login')
-  } else if (to.meta.role && token) {
+  } else if (to.meta.role && satoken) {
     // 根据角色进行路由控制
     if (to.meta.role !== role) {
       // 如果用户角色与路由要求的角色不匹配，重定向到对应的首页

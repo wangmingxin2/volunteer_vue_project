@@ -1,4 +1,6 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
+import router from '../router'
 
 // 创建axios实例
 const service = axios.create({
@@ -12,10 +14,10 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   (config) => {
-    // 可以在这里添加token等认证信息
-    const token = localStorage.getItem('token')
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`
+    // 使用小写的 satoken
+    const satoken = localStorage.getItem('satoken')
+    if (satoken) {
+      config.headers['satoken'] = satoken // 使用小写的 satoken 作为请求头
     }
     return config
   },
@@ -34,6 +36,12 @@ service.interceptors.response.use(
     if (res.code !== 200) {
       // 处理错误
       console.error('请求错误:', res.message)
+
+      // 处理 401 未授权错误
+      if (res.code === 401) {
+        handleUnauthorized()
+      }
+
       return Promise.reject(new Error(res.message || '请求失败'))
     } else {
       return res
@@ -41,8 +49,31 @@ service.interceptors.response.use(
   },
   (error) => {
     console.error('请求异常:', error)
+
+    // 处理 401 未授权错误
+    if (error.response && error.response.status === 401) {
+      handleUnauthorized()
+    }
+
     return Promise.reject(error)
   },
 )
+
+// 处理未授权错误
+function handleUnauthorized() {
+  // 清除登录信息
+  localStorage.removeItem('satoken')
+  localStorage.removeItem('userId')
+  localStorage.removeItem('username')
+  localStorage.removeItem('role')
+
+  // 显示提示信息
+  ElMessage.error('登录已过期，请重新登录')
+
+  // 跳转到登录页
+  if (router.currentRoute.value.path !== '/login') {
+    router.push('/login')
+  }
+}
 
 export default service

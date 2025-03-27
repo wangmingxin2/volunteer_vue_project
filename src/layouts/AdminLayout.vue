@@ -2,10 +2,10 @@
   <div class="admin-layout">
     <el-container class="layout-container">
       <!-- 侧边栏 -->
-      <el-aside width="220px" class="aside">
+      <el-aside :width="isCollapse ? '64px' : '220px'" class="aside">
         <div class="logo-container">
           <img src="http://60.204.157.137:9000/volunteer/logo.png" alt="Logo" class="logo" />
-          <span class="title">志愿者管理系统</span>
+          <span class="title" v-show="!isCollapse">志愿者管理系统</span>
         </div>
         <el-scrollbar>
           <el-menu
@@ -21,35 +21,42 @@
               <el-icon><DataBoard /></el-icon>
               <template #title>仪表盘</template>
             </el-menu-item>
-            <el-sub-menu index="1">
-              <template #title>
-                <el-icon><User /></el-icon>
-                <span>用户管理</span>
-              </template>
-              <el-menu-item index="/admin/users">用户列表</el-menu-item>
-              <el-menu-item index="/admin/volunteers">志愿者管理</el-menu-item>
-              <el-menu-item index="/admin/organizations">组织管理</el-menu-item>
-            </el-sub-menu>
-            <el-sub-menu index="2">
-              <template #title>
-                <el-icon><Document /></el-icon>
-                <span>项目管理</span>
-              </template>
-              <el-menu-item index="/admin/projects">项目列表</el-menu-item>
-              <el-menu-item index="/admin/project-categories">项目分类</el-menu-item>
-            </el-sub-menu>
-            <el-sub-menu index="3">
-              <template #title>
-                <el-icon><Bell /></el-icon>
-                <span>公告管理</span>
-              </template>
-              <el-menu-item index="/admin/announcements">公告列表</el-menu-item>
-              <el-menu-item index="/admin/banners">轮播图管理</el-menu-item>
-            </el-sub-menu>
+
+            <el-menu-item index="/admin/users">
+              <el-icon><User /></el-icon>
+              <template #title>用户管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/organizations">
+              <el-icon><OfficeBuilding /></el-icon>
+              <template #title>组织管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/projects">
+              <el-icon><Document /></el-icon>
+              <template #title>项目管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/project-categories">
+              <el-icon><Files /></el-icon>
+              <template #title>项目分类</template>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/announcements">
+              <el-icon><Bell /></el-icon>
+              <template #title>公告管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/banners">
+              <el-icon><Picture /></el-icon>
+              <template #title>轮播图管理</template>
+            </el-menu-item>
+
             <el-menu-item index="/admin/statistics">
               <el-icon><PieChart /></el-icon>
               <template #title>统计分析</template>
             </el-menu-item>
+
             <el-menu-item index="/admin/settings">
               <el-icon><Setting /></el-icon>
               <template #title>系统设置</template>
@@ -82,16 +89,15 @@
             </el-tooltip>
             <el-dropdown trigger="click">
               <div class="user-info">
-                <el-avatar
-                  :size="32"
-                  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                />
-                <span class="username">管理员</span>
+                <el-avatar :size="32" :src="userAvatar || defaultAvatar" />
+                <span class="username">{{ username || '管理员' }}</span>
               </div>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item>个人信息</el-dropdown-item>
-                  <el-dropdown-item>修改密码</el-dropdown-item>
+                  <el-dropdown-item @click="router.push('/admin/profile')"
+                    >个人信息</el-dropdown-item
+                  >
+                  <el-dropdown-item @click="showChangePasswordDialog">修改密码</el-dropdown-item>
                   <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
@@ -105,11 +111,17 @@
         </el-main>
       </el-container>
     </el-container>
+
+    <!-- 添加修改密码对话框 -->
+    <change-password-dialog
+      v-model:visible="passwordDialogVisible"
+      @success="handlePasswordChanged"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   DataBoard,
@@ -121,8 +133,13 @@ import {
   Fold,
   Expand,
   FullScreen,
+  OfficeBuilding,
+  Files,
+  Picture,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'
+import { getUserInfo } from '../api/user'
 
 const router = useRouter()
 const route = useRoute()
@@ -160,9 +177,10 @@ const handleLogout = () => {
   })
     .then(() => {
       // 清除登录信息
-      localStorage.removeItem('token')
+      localStorage.removeItem('satoken')
       localStorage.removeItem('userId')
       localStorage.removeItem('username')
+      localStorage.removeItem('role')
 
       ElMessage.success('退出登录成功')
       router.push('/login')
@@ -171,6 +189,43 @@ const handleLogout = () => {
       // 取消退出
     })
 }
+
+// 添加密码对话框相关变量和方法
+const passwordDialogVisible = ref(false)
+
+const showChangePasswordDialog = () => {
+  passwordDialogVisible.value = true
+}
+
+const handlePasswordChanged = () => {
+  ElMessage.success('密码修改成功，请使用新密码重新登录')
+  // 可以选择是否自动退出登录
+  // router.push('/login')
+}
+
+// 添加用户信息相关变量
+const username = ref(localStorage.getItem('username') || '')
+const userAvatar = ref('')
+const defaultAvatar = 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
+
+// 获取用户信息
+const fetchUserInfo = async () => {
+  try {
+    const res = await getUserInfo()
+    if (res.code === 200) {
+      username.value = res.data.username
+      if (res.data.avatar) {
+        userAvatar.value = res.data.avatar
+      }
+    }
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+  }
+}
+
+onMounted(() => {
+  fetchUserInfo()
+})
 </script>
 
 <style scoped>
@@ -197,6 +252,8 @@ const handleLogout = () => {
   align-items: center;
   padding: 0 20px;
   background-color: #002140;
+  overflow: hidden;
+  transition: all 0.3s;
 }
 
 .logo {

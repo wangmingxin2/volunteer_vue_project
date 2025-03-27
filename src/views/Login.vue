@@ -126,11 +126,9 @@ const handleLogin = async () => {
         // 登录成功处理
         if (res.code === 200) {
           // 保存登录信息到本地存储
-          localStorage.setItem('token', res.data.token)
+          localStorage.setItem('satoken', res.data.satoken)
           localStorage.setItem('userId', res.data.userId.toString())
           localStorage.setItem('username', res.data.username)
-
-          // 保存选择的角色到本地存储，用于路由守卫判断
           localStorage.setItem('role', loginForm.role)
 
           // 如果选择了记住我，可以设置更长的过期时间
