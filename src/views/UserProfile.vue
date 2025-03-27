@@ -239,7 +239,6 @@ const fetchUserInfo = async () => {
     }
   } catch (error) {
     console.error('获取用户信息失败:', error)
-    ElMessage.error('获取用户信息失败')
   } finally {
     loading.value = false
   }
@@ -252,10 +251,10 @@ const handleEdit = () => {
   editForm.username = userInfo.value.username
   editForm.typeId = userInfo.value.typeId
   editForm.realName = userInfo.value.realName || ''
-  editForm.gender = userInfo.value.gender || 0
+  editForm.gender = userInfo.value.gender ? Number(userInfo.value.gender) : 0
   editForm.idCard = userInfo.value.idCard || ''
   editForm.email = userInfo.value.email || ''
-  editForm.mobile = userInfo.value.mobile || ''
+  editForm.mobile = userInfo.value.mobile || userInfo.value.phone || ''
   editForm.address = userInfo.value.address || ''
   editForm.birthday = userInfo.value.birthday || ''
   editForm.avatar = userInfo.value.avatar || ''
@@ -278,7 +277,7 @@ const submitEdit = async () => {
       // 确保使用正确的 typeId
       typeId: userInfo.value.typeId,
       realName: editForm.realName,
-      gender: editForm.gender,
+      gender: String(editForm.gender),
       idCard: editForm.idCard,
       email: editForm.email,
       mobile: editForm.mobile,

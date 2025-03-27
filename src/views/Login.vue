@@ -59,7 +59,8 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage, FormInstance } from 'element-plus'
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { User, Lock } from '@element-plus/icons-vue'
 import { login } from '../api/user'
 import type { UserDto } from '../api/user'
@@ -89,9 +90,9 @@ const rules = {
 
 // 角色映射到 typeId
 const roleToTypeId = {
-  admin: '1',
-  organization: '2',
-  volunteer: '3',
+  admin: 1,
+  organization: 2,
+  volunteer: 3,
 }
 
 // 角色映射到路由路径

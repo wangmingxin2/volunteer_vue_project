@@ -49,7 +49,8 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
-import { ElMessage, FormInstance } from 'element-plus'
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import { updatePassword } from '../api/user'
 import { useRouter } from 'vue-router'
 

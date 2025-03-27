@@ -13,14 +13,36 @@ export interface Announcement {
   deleted: number
 }
 
-export function getAnnouncementPage(page: number, size: number, status: number = 0) {
+export function getAnnouncementPage(params: any) {
   return request({
     url: '/announcement/page',
     method: 'get',
-    params: {
-      status,
-      page,
-      size,
-    },
+    params,
+  })
+}
+
+// 新增公告
+export function addAnnouncement(data: any) {
+  return request({
+    url: '/announcement',
+    method: 'post',
+    data,
+  })
+}
+
+// 更新公告
+export function updateAnnouncement(data: any) {
+  return request({
+    url: `/announcement/${data.announcementId}`,
+    method: 'put',
+    data,
+  })
+}
+
+// 删除公告
+export function deleteAnnouncement(announcementId: string) {
+  return request({
+    url: `/announcement/${announcementId}`,
+    method: 'delete',
   })
 }

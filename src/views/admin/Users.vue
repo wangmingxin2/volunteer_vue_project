@@ -357,7 +357,15 @@ const userFormRules = {
 const getList = async () => {
   try {
     loading.value = true
-    const res = await getUserList(queryParams)
+    const params = {
+      status: queryParams.status || undefined,
+      role: queryParams.role || undefined,
+      realName: queryParams.realName || undefined,
+      page: queryParams.page,
+      size: queryParams.size,
+    }
+
+    const res = await getUserList(params)
     if (res.code === 200) {
       userList.value = res.data.records || []
       total.value = res.data.total || 0
@@ -391,13 +399,13 @@ const handleSelectionChange = (selection: any[]) => {
   selectedIds.value = selection.map((item) => item.userId)
 }
 
-// 每页条数变化
+// 修改分页大小
 const handleSizeChange = (size: number) => {
   queryParams.size = size
   getList()
 }
 
-// 当前页变化
+// 修改当前页
 const handleCurrentChange = (page: number) => {
   queryParams.page = page
   getList()
