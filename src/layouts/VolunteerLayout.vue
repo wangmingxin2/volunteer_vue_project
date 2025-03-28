@@ -21,25 +21,30 @@
               <el-icon><HomeFilled /></el-icon>
               <template #title>首页</template>
             </el-menu-item>
-            <el-menu-item index="/volunteer/projects">
-              <el-icon><Document /></el-icon>
-              <template #title>志愿项目</template>
-            </el-menu-item>
+
             <el-menu-item index="/volunteer/activities">
               <el-icon><Calendar /></el-icon>
               <template #title>我的活动</template>
             </el-menu-item>
-            <el-menu-item index="/volunteer/hours">
-              <el-icon><Timer /></el-icon>
-              <template #title>服务时长</template>
+
+            <el-menu-item index="/volunteer/projects">
+              <el-icon><Document /></el-icon>
+              <template #title>志愿项目</template>
             </el-menu-item>
-            <el-menu-item index="/volunteer/certificates">
-              <el-icon><Medal /></el-icon>
-              <template #title>我的证书</template>
-            </el-menu-item>
+
             <el-menu-item index="/volunteer/profile">
               <el-icon><User /></el-icon>
-              <template #title>个人中心</template>
+              <template #title>个人信息</template>
+            </el-menu-item>
+
+            <el-menu-item index="/volunteer/messages">
+              <el-icon><ChatDotRound /></el-icon>
+              <template #title>消息中心</template>
+            </el-menu-item>
+
+            <el-menu-item index="/volunteer/statistics">
+              <el-icon><PieChart /></el-icon>
+              <template #title>服务统计</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
@@ -109,6 +114,8 @@ import {
   Bell,
   Fold,
   Expand,
+  ChatDotRound,
+  PieChart,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'

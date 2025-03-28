@@ -109,6 +109,12 @@ const router = createRouter({
           component: () => import('../views/admin/Settings.vue'),
           meta: { title: '系统设置' },
         },
+        {
+          path: 'activities',
+          name: 'admin-activities',
+          component: () => import('../views/admin/Activities.vue'),
+          meta: { title: '活动管理', icon: 'Calendar' },
+        },
       ],
     },
     {

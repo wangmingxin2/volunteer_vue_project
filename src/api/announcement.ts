@@ -13,11 +13,15 @@ export interface Announcement {
   deleted: number
 }
 
-export function getAnnouncementPage(params: any) {
+export function getAnnouncementPage(page: number, size: number = 10, status?: number) {
   return request({
     url: '/announcement/page',
     method: 'get',
-    params,
+    params: {
+      page,
+      size,
+      status,
+    },
   })
 }
 

@@ -21,29 +21,35 @@
               <el-icon><HomeFilled /></el-icon>
               <template #title>首页</template>
             </el-menu-item>
-            <el-sub-menu index="1">
-              <template #title>
-                <el-icon><Document /></el-icon>
-                <span>项目管理</span>
-              </template>
-              <el-menu-item index="/organization/projects">项目列表</el-menu-item>
-              <el-menu-item index="/organization/projects/create">创建项目</el-menu-item>
-            </el-sub-menu>
+
+            <el-menu-item index="/organization/activities">
+              <el-icon><Calendar /></el-icon>
+              <template #title>活动管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/organization/projects">
+              <el-icon><Document /></el-icon>
+              <template #title>项目管理</template>
+            </el-menu-item>
+
             <el-menu-item index="/organization/volunteers">
               <el-icon><User /></el-icon>
               <template #title>志愿者管理</template>
             </el-menu-item>
-            <el-menu-item index="/organization/activities">
-              <el-icon><Calendar /></el-icon>
-              <template #title>活动记录</template>
+
+            <el-menu-item index="/organization/profile">
+              <el-icon><OfficeBuilding /></el-icon>
+              <template #title>组织信息</template>
             </el-menu-item>
+
             <el-menu-item index="/organization/statistics">
               <el-icon><PieChart /></el-icon>
-              <template #title>数据统计</template>
+              <template #title>统计分析</template>
             </el-menu-item>
-            <el-menu-item index="/organization/profile">
-              <el-icon><Setting /></el-icon>
-              <template #title>组织信息</template>
+
+            <el-menu-item index="/organization/announcements">
+              <el-icon><Bell /></el-icon>
+              <template #title>公告管理</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
@@ -114,6 +120,7 @@ import {
   Bell,
   Fold,
   Expand,
+  OfficeBuilding,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'

@@ -135,9 +135,9 @@
           <el-input v-model="announcementForm.title" placeholder="请输入公告标题" />
         </el-form-item>
 
-        <el-form-item label="封面图片" prop="coverImage" class="cover-upload-item">
+        <el-form-item label="封面图片" prop="coverImage">
           <el-upload
-            class="cover-uploader"
+            class="avatar-uploader"
             action="http://localhost:8080/upload"
             :headers="uploadHeaders"
             :show-file-list="false"
@@ -147,11 +147,11 @@
             <img
               v-if="announcementForm.coverImage"
               :src="announcementForm.coverImage"
-              class="cover"
+              class="avatar"
             />
-            <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>
+            <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
           </el-upload>
-          <div class="cover-tip">点击上传封面图片</div>
+          <div class="avatar-tip">建议尺寸: 300x300px，大小不超过2MB</div>
         </el-form-item>
 
         <el-form-item label="公告内容" prop="content">
@@ -283,13 +283,14 @@ const uploadHeaders = {
 const getList = async () => {
   try {
     loading.value = true
-    const params = {
-      status: queryParams.status || undefined,
-      page: queryParams.page,
-      size: queryParams.size,
-    }
 
-    const res = await getAnnouncementPage(params)
+    // 使用新的参数结构调用 getAnnouncementPage
+    const page = queryParams.page || 1
+    const size = queryParams.size || 10
+    const status = queryParams.status ? parseInt(queryParams.status) : undefined
+
+    const res = await getAnnouncementPage(page, size, status)
+
     if (res.code === 200) {
       announcementList.value = res.data.records || []
       total.value = res.data.total || 0
@@ -298,6 +299,7 @@ const getList = async () => {
     }
   } catch (error) {
     console.error('获取公告列表失败:', error)
+    ElMessage.error('获取公告列表失败')
   } finally {
     loading.value = false
   }

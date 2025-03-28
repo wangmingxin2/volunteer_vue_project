@@ -61,6 +61,11 @@
               <el-icon><Setting /></el-icon>
               <template #title>系统设置</template>
             </el-menu-item>
+
+            <el-menu-item index="/admin/activities">
+              <el-icon><Calendar /></el-icon>
+              <template #title>活动管理</template>
+            </el-menu-item>
           </el-menu>
         </el-scrollbar>
       </el-aside>
@@ -136,6 +141,7 @@ import {
   OfficeBuilding,
   Files,
   Picture,
+  Calendar,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'

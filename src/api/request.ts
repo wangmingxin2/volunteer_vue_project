@@ -44,7 +44,7 @@ service.interceptors.response.use(
 
       return Promise.reject(new Error(res.message || '请求失败'))
     } else {
-      return res
+      return res // 直接返回响应数据，而不是整个 response 对象
     }
   },
   (error) => {

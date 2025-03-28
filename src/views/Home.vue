@@ -93,7 +93,8 @@ const fetchBanners = async () => {
 
 const fetchAnnouncements = async (page: number) => {
   try {
-    const res = await getAnnouncementPage(page, pageSize.value)
+    const res = await getAnnouncementPage(page, pageSize.value, 1)
+    console.log('公告数据:', res)
     announcements.value = res.data.records
     total.value = res.data.total
   } catch (error) {
