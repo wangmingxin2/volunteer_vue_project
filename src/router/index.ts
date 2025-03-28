@@ -115,6 +115,12 @@ const router = createRouter({
           component: () => import('../views/admin/Activities.vue'),
           meta: { title: '活动管理', icon: 'Calendar' },
         },
+        {
+          path: 'signup-management',
+          name: 'admin-signup-management',
+          component: () => import('../views/admin/SignupManagement.vue'),
+          meta: { title: '活动报名管理' },
+        },
       ],
     },
     {
@@ -198,6 +204,12 @@ const router = createRouter({
           name: 'organization-volunteers',
           component: () => import('../views/organization/Volunteers.vue'),
           meta: { title: '志愿者管理' },
+        },
+        {
+          path: 'signup-management',
+          name: 'organization-signup-management',
+          component: () => import('../views/organization/SignupManagement.vue'),
+          meta: { title: '活动报名管理' },
         },
       ],
     },

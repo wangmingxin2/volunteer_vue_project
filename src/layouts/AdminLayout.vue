@@ -66,6 +66,12 @@
               <el-icon><Calendar /></el-icon>
               <template #title>活动管理</template>
             </el-menu-item>
+
+            <!-- 添加活动报名管理菜单项 -->
+            <el-menu-item index="/admin/signup-management">
+              <el-icon><Document /></el-icon>
+              <template #title>活动报名管理</template>
+            </el-menu-item>
           </el-menu>
         </el-scrollbar>
       </el-aside>

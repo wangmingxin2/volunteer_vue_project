@@ -9,8 +9,13 @@
 
       <!-- 搜索区域 -->
       <el-form :inline="true" :model="queryParams" class="search-form">
-        <el-form-item label="活动状态" prop="auditStatus">
-          <el-select v-model="queryParams.auditStatus" placeholder="审核状态" clearable>
+        <el-form-item label="审核状态" prop="auditStatus">
+          <el-select
+            v-model="queryParams.auditStatus"
+            placeholder="请选择审核状态"
+            clearable
+            style="width: 200px"
+          >
             <el-option label="待审核" value="0" />
             <el-option label="已通过" value="1" />
             <el-option label="已拒绝" value="2" />
@@ -70,11 +75,12 @@
               查看详情
             </el-button>
 
-            <!-- 如果活动未取消且审核状态为已通过或待审核，显示取消报名按钮 -->
+            <!-- 如果活动未取消且审核状态为已通过或待审核，且没有服务时长数据，显示取消报名按钮 -->
             <el-button
               v-if="
                 scope.row.status === 1 &&
-                (scope.row.auditStatus === 0 || scope.row.auditStatus === 1)
+                (scope.row.auditStatus === 0 || scope.row.auditStatus === 1) &&
+                (!scope.row.serviceHours || scope.row.serviceHours <= 0)
               "
               size="small"
               type="danger"
@@ -84,9 +90,9 @@
               取消报名
             </el-button>
 
-            <!-- 如果有服务时长，显示心得体会按钮 -->
+            <!-- 如果有服务时长且状态不是取消，显示心得体会按钮 -->
             <el-button
-              v-if="scope.row.serviceHours && scope.row.serviceHours > 0"
+              v-if="scope.row.serviceHours && scope.row.serviceHours > 0 && scope.row.status === 1"
               size="small"
               type="success"
               plain

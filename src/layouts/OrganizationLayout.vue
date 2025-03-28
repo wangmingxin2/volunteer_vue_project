@@ -24,7 +24,7 @@
 
             <el-menu-item index="/organization/activities">
               <el-icon><Calendar /></el-icon>
-              <template #title>志愿活动管理</template>
+              <template #title>活动管理</template>
             </el-menu-item>
 
             <el-menu-item index="/organization/projects">
@@ -55,6 +55,11 @@
             <el-menu-item index="/organization/announcements">
               <el-icon><Bell /></el-icon>
               <template #title>公告管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/organization/signup-management">
+              <el-icon><Document /></el-icon>
+              <template #title>活动报名管理</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
