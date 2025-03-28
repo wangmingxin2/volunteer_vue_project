@@ -139,14 +139,20 @@ const router = createRouter({
         {
           path: 'projects',
           name: 'volunteer-projects',
-          component: () => import('../views/volunteer/Projects.vue'),
-          meta: { title: '志愿项目' },
+          component: () => import('../views/volunteer/ActivitySignup.vue'),
+          meta: { title: '活动报名' },
         },
         {
           path: 'activities',
           name: 'volunteer-activities',
           component: () => import('../views/volunteer/Activities.vue'),
           meta: { title: '我的活动' },
+        },
+        {
+          path: 'activity-signup',
+          name: 'activity-signup',
+          component: () => import('../views/volunteer/ActivitySignup.vue'),
+          meta: { title: '活动报名' },
         },
       ],
     },
@@ -168,6 +174,18 @@ const router = createRouter({
           path: 'profile',
           name: 'organization-profile',
           component: UserProfile,
+        },
+        {
+          path: 'activities',
+          name: 'organization-activities',
+          component: () => import('../views/organization/Activities.vue'),
+          meta: { title: '志愿活动管理' },
+        },
+        {
+          path: 'organization-info',
+          name: 'organization-info',
+          component: () => import('../views/organization/OrganizationInfo.vue'),
+          meta: { title: '组织信息' },
         },
         {
           path: 'projects',

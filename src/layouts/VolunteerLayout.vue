@@ -27,9 +27,9 @@
               <template #title>我的活动</template>
             </el-menu-item>
 
-            <el-menu-item index="/volunteer/projects">
+            <el-menu-item index="/volunteer/activity-signup">
               <el-icon><Document /></el-icon>
-              <template #title>志愿项目</template>
+              <template #title>活动报名</template>
             </el-menu-item>
 
             <el-menu-item index="/volunteer/profile">

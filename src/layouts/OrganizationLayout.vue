@@ -24,7 +24,7 @@
 
             <el-menu-item index="/organization/activities">
               <el-icon><Calendar /></el-icon>
-              <template #title>活动管理</template>
+              <template #title>志愿活动管理</template>
             </el-menu-item>
 
             <el-menu-item index="/organization/projects">
@@ -37,9 +37,14 @@
               <template #title>志愿者管理</template>
             </el-menu-item>
 
-            <el-menu-item index="/organization/profile">
+            <el-menu-item index="/organization/organization-info">
               <el-icon><OfficeBuilding /></el-icon>
               <template #title>组织信息</template>
+            </el-menu-item>
+
+            <el-menu-item index="/organization/profile">
+              <el-icon><Avatar /></el-icon>
+              <template #title>个人信息</template>
             </el-menu-item>
 
             <el-menu-item index="/organization/statistics">
@@ -82,7 +87,7 @@
               <template #dropdown>
                 <el-dropdown-menu>
                   <el-dropdown-item @click="router.push('/organization/profile')"
-                    >组织信息</el-dropdown-item
+                    >个人信息</el-dropdown-item
                   >
                   <el-dropdown-item @click="showChangePasswordDialog">修改密码</el-dropdown-item>
                   <el-dropdown-item divided @click="handleLogout">退出登录</el-dropdown-item>
@@ -121,6 +126,7 @@ import {
   Fold,
   Expand,
   OfficeBuilding,
+  Avatar,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'
@@ -143,9 +149,10 @@ const currentRoute = computed(() => {
     '/organization/projects': '项目列表',
     '/organization/projects/create': '创建项目',
     '/organization/volunteers': '志愿者管理',
-    '/organization/activities': '活动记录',
+    '/organization/activities': '志愿活动管理',
     '/organization/statistics': '数据统计',
-    '/organization/profile': '组织信息',
+    '/organization/profile': '个人信息',
+    '/organization/organization-info': '组织信息',
   }
   return pathMap[route.path] || '首页'
 })

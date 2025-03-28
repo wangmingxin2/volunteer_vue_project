@@ -69,3 +69,20 @@ export function updateOrganizationStatus(orgId: string | number, status: number)
     params: { orgId, status },
   })
 }
+
+// 根据管理者ID获取组织信息
+export function getOrgByManagerId(managerId: string) {
+  return request({
+    url: `/organize/manager/${managerId}`,
+    method: 'get',
+  })
+}
+
+// 根据组织ID更新组织信息
+export function updateOrgById(id: string | number, data: any) {
+  return request({
+    url: `/organize/${id}`,
+    method: 'put',
+    data,
+  })
+}

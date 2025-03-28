@@ -25,9 +25,10 @@ export interface Activity {
 export function getActivityPage(
   page: number,
   size: number = 10,
-  status?: number,
-  orgId?: number,
+  status?: string,
+  orgId?: string | number,
   activityName?: string,
+  managerId?: string | number,
 ) {
   return request({
     url: '/activity/page',
@@ -38,6 +39,7 @@ export function getActivityPage(
       status,
       orgId,
       activityName,
+      managerId,
     },
   })
 }
@@ -83,5 +85,13 @@ export function getActivitySignups(activityId: string | number, page: number, si
     url: `/activity/${activityId}/signups`,
     method: 'get',
     params: { page, size },
+  })
+}
+
+// 通过报名申请
+export function approveSignup(signupId: string | number) {
+  return request({
+    url: `/activity/signup/${signupId}/approve`,
+    method: 'put',
   })
 }
