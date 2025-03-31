@@ -68,22 +68,10 @@ const router = createRouter({
           meta: { title: '用户管理' },
         },
         {
-          path: 'volunteers',
-          name: 'admin-volunteers',
-          component: () => import('../views/admin/Volunteers.vue'),
-          meta: { title: '志愿者管理' },
-        },
-        {
           path: 'organizations',
           name: 'admin-organizations',
           component: () => import('../views/admin/Organizations.vue'),
           meta: { title: '组织管理' },
-        },
-        {
-          path: 'project-categories',
-          name: 'admin-project-categories',
-          component: () => import('../views/admin/ProjectCategories.vue'),
-          meta: { title: '项目分类' },
         },
         {
           path: 'announcements',
@@ -96,12 +84,6 @@ const router = createRouter({
           name: 'admin-banners',
           component: () => import('../views/admin/Banners.vue'),
           meta: { title: '轮播图管理' },
-        },
-        {
-          path: 'statistics',
-          name: 'admin-statistics',
-          component: () => import('../views/admin/Statistics.vue'),
-          meta: { title: '统计分析' },
         },
         {
           path: 'settings',
@@ -120,6 +102,12 @@ const router = createRouter({
           name: 'admin-signup-management',
           component: () => import('../views/admin/SignupManagement.vue'),
           meta: { title: '活动报名管理' },
+        },
+        {
+          path: 'reflection-management',
+          name: 'admin-reflection-management',
+          component: () => import('../views/admin/ReflectionManagement.vue'),
+          meta: { title: '活动心得管理' },
         },
       ],
     },

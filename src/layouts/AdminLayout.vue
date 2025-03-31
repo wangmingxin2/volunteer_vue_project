@@ -32,14 +32,19 @@
               <template #title>组织管理</template>
             </el-menu-item>
 
-            <el-menu-item index="/admin/projects">
-              <el-icon><Document /></el-icon>
-              <template #title>项目管理</template>
+            <el-menu-item index="/admin/activities">
+              <el-icon><Calendar /></el-icon>
+              <template #title>活动管理</template>
             </el-menu-item>
 
-            <el-menu-item index="/admin/project-categories">
-              <el-icon><Files /></el-icon>
-              <template #title>项目分类</template>
+            <el-menu-item index="/admin/signup-management">
+              <el-icon><Document /></el-icon>
+              <template #title>活动报名管理</template>
+            </el-menu-item>
+
+            <el-menu-item index="/admin/reflection-management">
+              <el-icon><ChatLineSquare /></el-icon>
+              <template #title>活动心得管理</template>
             </el-menu-item>
 
             <el-menu-item index="/admin/announcements">
@@ -52,25 +57,9 @@
               <template #title>轮播图管理</template>
             </el-menu-item>
 
-            <el-menu-item index="/admin/statistics">
-              <el-icon><PieChart /></el-icon>
-              <template #title>统计分析</template>
-            </el-menu-item>
-
             <el-menu-item index="/admin/settings">
               <el-icon><Setting /></el-icon>
               <template #title>系统设置</template>
-            </el-menu-item>
-
-            <el-menu-item index="/admin/activities">
-              <el-icon><Calendar /></el-icon>
-              <template #title>活动管理</template>
-            </el-menu-item>
-
-            <!-- 添加活动报名管理菜单项 -->
-            <el-menu-item index="/admin/signup-management">
-              <el-icon><Document /></el-icon>
-              <template #title>活动报名管理</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
@@ -148,6 +137,7 @@ import {
   Files,
   Picture,
   Calendar,
+  ChatLineSquare,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'
