@@ -89,6 +89,26 @@
             {{ scope.row.likeCount || 0 }}
           </template>
         </el-table-column>
+        <el-table-column label="心得图片" width="100" align="center">
+          <template #default="{ row }">
+            <el-image
+              v-if="row.images"
+              :src="row.images.split(',')[0]"
+              style="width: 50px; height: 50px"
+              fit="cover"
+              :preview-src-list="row.images ? [row.images.split(',')[0]] : []"
+              preview-teleported
+              class="clickable-image"
+            >
+              <template #error>
+                <div class="image-slot">
+                  <el-icon><Picture /></el-icon>
+                </div>
+              </template>
+            </el-image>
+            <span v-else>无图片</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="240" align="center">
           <template #default="scope">
             <el-button type="primary" link @click="handleView(scope.row)">查看</el-button>
@@ -250,17 +270,24 @@
         </el-form-item>
         <el-form-item label="心得图片">
           <el-upload
-            action="#"
+            ref="uploadRef"
             list-type="picture-card"
-            :auto-upload="false"
             :file-list="fileList"
-            :on-change="handleFileChange"
-            :on-remove="handleFileRemove"
-            :limit="9"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove"
+            :on-success="handleUploadSuccess"
+            :limit="1"
+            :on-exceed="handleExceed"
+            action="http://localhost:8080/upload"
           >
-            <el-icon><Plus /></el-icon>
+            <el-icon v-if="fileList.length < 1"><Plus /></el-icon>
+            <template #tip>
+              <div class="el-upload__tip">只能上传一张JPG/PNG图片，且不超过5MB</div>
+            </template>
           </el-upload>
-          <div class="el-upload__tip">请上传图片，最多9张</div>
+          <el-dialog v-model="dialogImageVisible" title="预览图片">
+            <img w-full :src="dialogImageUrl" alt="Preview Image" style="max-width: 100%" />
+          </el-dialog>
         </el-form-item>
         <el-form-item label="公开状态" prop="isPublic">
           <el-radio-group v-model="form.isPublic">
@@ -291,7 +318,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox, FormInstance } from 'element-plus'
 import { formatDate } from '@/utils/format'
 import request from '@/api/request'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Picture } from '@element-plus/icons-vue'
 
 // API
 function getReflectionPage(params: any) {
@@ -363,6 +390,9 @@ const formRef = ref<FormInstance>()
 const rejectFormRef = ref<FormInstance>()
 const fileList = ref<any[]>([])
 const formTitle = ref('新增心得')
+const uploadRef = ref<any>(null)
+const dialogImageVisible = ref(false)
+const dialogImageUrl = ref('')
 
 // 查询参数
 const queryParams = reactive({
@@ -582,8 +612,6 @@ const handleAdd = () => {
 const handleEdit = (row: any) => {
   formType.value = 'edit'
   formTitle.value = '编辑心得'
-
-  // 重置表单数据
   resetForm()
 
   // 填充表单数据
@@ -593,28 +621,26 @@ const handleEdit = (row: any) => {
   form.title = row.title
   form.content = row.content
   form.isPublic = row.isPublic
+  form.auditStatus = row.auditStatus
 
-  // 重要：先设置form.images，确保有值
+  // 设置images，确保有值
   form.images = row.images || ''
 
-  console.log('编辑心得，原始图片数据:', row.images)
-
-  // 处理已有图片
+  // 处理已有图片，限制为一张
   fileList.value = []
   if (row.images) {
-    const imageArray = formatImageUrls(row.images)
-    console.log('解析后的图片数组:', imageArray)
-
-    fileList.value = imageArray.map((url: string, index: number) => {
-      return {
-        name: `已有图片${index + 1}`,
-        url: url,
-        uid: `existing-${index}`,
-        status: 'success',
-      }
-    })
-
-    console.log('初始化的文件列表:', fileList.value)
+    const imageArray = row.images.split(',').filter((url: string) => url.trim() !== '')
+    if (imageArray.length > 0) {
+      // 只取第一张图片
+      fileList.value = [
+        {
+          name: '已有图片',
+          url: imageArray[0],
+          uid: 'existing-1',
+          status: 'success',
+        },
+      ]
+    }
   }
 
   formDialogVisible.value = true
@@ -661,6 +687,38 @@ const handleFileRemove = (file: any) => {
   }
 }
 
+// 处理超出上传数量限制
+const handleExceed = () => {
+  ElMessage.warning('最多只能上传1张图片')
+}
+
+// 图片上传成功处理
+const handleUploadSuccess = (response: any, uploadFile: any) => {
+  // 确保只有一张图片，如果已有图片就替换
+  fileList.value = [
+    {
+      name: uploadFile.name,
+      url: response.data,
+      uid: uploadFile.uid,
+      status: 'success',
+    },
+  ]
+}
+
+// 处理编辑时的图片加载
+const handlePictureCardPreview = (file: any) => {
+  dialogImageUrl.value = file.url
+  dialogImageVisible.value = true
+}
+
+// 处理编辑时的图片移除
+const handleRemove = (file: any) => {
+  const index = fileList.value.indexOf(file)
+  if (index !== -1) {
+    fileList.value.splice(index, 1)
+  }
+}
+
 // 提交表单
 const submitForm = async () => {
   try {
@@ -668,20 +726,8 @@ const submitForm = async () => {
 
     submitLoading.value = true
 
-    // 确保图片列表正确，打印日志进行验证
-    console.log('提交前的文件列表:', fileList.value)
-
-    // 将fileList转为images字符串，增加日志和防错处理
-    if (fileList.value && fileList.value.length > 0) {
-      form.images = fileList.value
-        .filter((file) => file && file.url) // 确保只处理有url的文件
-        .map((file) => file.url)
-        .join(',')
-    } else {
-      form.images = '' // 如果没有图片，设置为空字符串
-    }
-
-    console.log('提交的图片字段值:', form.images)
+    // 将fileList转为images字符串
+    form.images = fileList.value.length > 0 ? fileList.value[0].url : ''
 
     try {
       const res =
@@ -798,5 +844,24 @@ onMounted(() => {
   font-size: 12px;
   color: #909399;
   margin-top: 5px;
+}
+
+.clickable-image {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.clickable-image:hover {
+  transform: scale(1.1);
+}
+
+.image-slot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: #f5f7fa;
+  color: #909399;
 }
 </style>
