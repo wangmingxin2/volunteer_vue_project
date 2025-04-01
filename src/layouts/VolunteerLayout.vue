@@ -41,6 +41,10 @@
               <el-icon><ChatDotRound /></el-icon>
               <template #title>消息中心</template>
             </el-menu-item>
+            <el-menu-item index="/volunteer/reflections">
+              <el-icon><PieChart /></el-icon>
+              <template #title>心得管理</template>
+            </el-menu-item>
           </el-menu>
         </el-scrollbar>
       </el-aside>

@@ -107,6 +107,7 @@ const router = createRouter({
     {
       path: '/volunteer',
       component: VolunteerLayout,
+      redirect: '/volunteer/home',
       meta: { requiresAuth: true, role: 'volunteer' },
       children: [
         {
@@ -140,6 +141,18 @@ const router = createRouter({
           name: 'activity-signup',
           component: () => import('../views/volunteer/ActivitySignup.vue'),
           meta: { title: '活动报名' },
+        },
+        {
+          path: 'reflections',
+          name: 'volunteer-reflections',
+          component: () => import('../views/volunteer/Reflections.vue'),
+          meta: { title: '心得体会管理' },
+        },
+        {
+          path: 'messages',
+          name: 'volunteer-messages',
+          component: () => import('../views/volunteer/Messages.vue'),
+          meta: { title: '消息中心' },
         },
       ],
     },
