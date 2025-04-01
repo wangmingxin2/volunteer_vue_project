@@ -175,22 +175,20 @@ const router = createRouter({
           meta: { title: '组织信息' },
         },
         {
-          path: 'projects',
-          name: 'organization-projects',
-          component: () => import('../views/organization/Projects.vue'),
-          meta: { title: '项目管理' },
-        },
-        {
-          path: 'volunteers',
-          name: 'organization-volunteers',
-          component: () => import('../views/organization/Volunteers.vue'),
-          meta: { title: '志愿者管理' },
-        },
-        {
           path: 'signup-management',
           name: 'organization-signup-management',
           component: () => import('../views/organization/SignupManagement.vue'),
           meta: { title: '活动报名管理' },
+        },
+        {
+          path: 'reflection-management',
+          name: 'OrganizationReflectionManagement',
+          component: () => import('../views/admin/ReflectionManagement.vue'),
+          meta: {
+            title: '活动心得管理',
+            requiresAuth: true,
+            roles: ['organization'],
+          },
         },
       ],
     },

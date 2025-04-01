@@ -27,16 +27,15 @@
               <template #title>活动管理</template>
             </el-menu-item>
 
-            <el-menu-item index="/organization/projects">
+            <el-menu-item index="/organization/signup-management">
               <el-icon><Document /></el-icon>
-              <template #title>项目管理</template>
+              <template #title>活动报名管理</template>
             </el-menu-item>
 
-            <el-menu-item index="/organization/volunteers">
-              <el-icon><User /></el-icon>
-              <template #title>志愿者管理</template>
+            <el-menu-item index="/organization/reflection-management">
+              <el-icon><ChatLineSquare /></el-icon>
+              <template #title>活动心得管理</template>
             </el-menu-item>
-
             <el-menu-item index="/organization/organization-info">
               <el-icon><OfficeBuilding /></el-icon>
               <template #title>组织信息</template>
@@ -45,21 +44,6 @@
             <el-menu-item index="/organization/profile">
               <el-icon><Avatar /></el-icon>
               <template #title>个人信息</template>
-            </el-menu-item>
-
-            <el-menu-item index="/organization/statistics">
-              <el-icon><PieChart /></el-icon>
-              <template #title>统计分析</template>
-            </el-menu-item>
-
-            <el-menu-item index="/organization/announcements">
-              <el-icon><Bell /></el-icon>
-              <template #title>公告管理</template>
-            </el-menu-item>
-
-            <el-menu-item index="/organization/signup-management">
-              <el-icon><Document /></el-icon>
-              <template #title>活动报名管理</template>
             </el-menu-item>
           </el-menu>
         </el-scrollbar>
@@ -127,6 +111,7 @@ import {
   Expand,
   OfficeBuilding,
   Avatar,
+  ChatLineSquare,
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import ChangePasswordDialog from '../components/ChangePasswordDialog.vue'
