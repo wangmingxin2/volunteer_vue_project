@@ -64,11 +64,6 @@
             </el-breadcrumb>
           </div>
           <div class="header-right">
-            <el-tooltip content="消息" placement="bottom">
-              <el-badge :value="2" class="badge">
-                <el-icon class="header-icon"><Bell /></el-icon>
-              </el-badge>
-            </el-tooltip>
             <el-dropdown trigger="click">
               <div class="user-info">
                 <el-avatar :size="32" :src="userAvatar || defaultAvatar" />

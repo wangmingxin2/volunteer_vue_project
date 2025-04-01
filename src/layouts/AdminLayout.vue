@@ -56,11 +56,6 @@
               <el-icon><Picture /></el-icon>
               <template #title>轮播图管理</template>
             </el-menu-item>
-
-            <el-menu-item index="/admin/settings">
-              <el-icon><Setting /></el-icon>
-              <template #title>系统设置</template>
-            </el-menu-item>
           </el-menu>
         </el-scrollbar>
       </el-aside>
@@ -79,14 +74,6 @@
             </el-breadcrumb>
           </div>
           <div class="header-right">
-            <el-tooltip content="全屏" placement="bottom">
-              <el-icon class="header-icon"><FullScreen /></el-icon>
-            </el-tooltip>
-            <el-tooltip content="消息" placement="bottom">
-              <el-badge :value="3" class="badge">
-                <el-icon class="header-icon"><Bell /></el-icon>
-              </el-badge>
-            </el-tooltip>
             <el-dropdown trigger="click">
               <div class="user-info">
                 <el-avatar :size="32" :src="userAvatar || defaultAvatar" />

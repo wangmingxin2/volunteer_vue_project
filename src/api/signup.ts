@@ -31,7 +31,7 @@ export function auditSignup(signupId: string, auditStatus: number, auditRemark?:
   return request({
     url: `/signup/audit/${signupId}`,
     method: 'put',
-    data: {
+    params: {
       auditStatus,
       auditRemark,
     },
@@ -43,7 +43,7 @@ export function recordServiceHours(signupId: string, serviceHours: number) {
   return request({
     url: `/signup/service-hours/${signupId}`,
     method: 'put',
-    data: {
+    params: {
       serviceHours,
     },
   })
