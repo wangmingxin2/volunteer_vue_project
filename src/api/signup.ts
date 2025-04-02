@@ -1,7 +1,24 @@
 import request from './request'
 
+// 定义API响应接口
+export interface ApiResponse<T = any> {
+  code: number
+  message: string
+  data: T
+}
+
+// 活动报名数据接口
+export interface ActivitySignupData {
+  activityId: number
+  userId: number
+  orgId: number
+  emergencyContact: string
+  emergencyPhone: string
+  signupTime?: string // 服务器可以自动生成，可选
+}
+
 // 获取用户报名列表
-export function getUserSignups(userId: string, params?: any) {
+export function getUserSignups(userId: string, params?: any): Promise<ApiResponse<any>> {
   return request({
     url: `/signup/user/${userId}`,
     method: 'get',
@@ -10,7 +27,7 @@ export function getUserSignups(userId: string, params?: any) {
 }
 
 // 取消报名
-export function cancelSignup(signupId: string) {
+export function cancelSignup(signupId: string): Promise<ApiResponse<any>> {
   return request({
     url: `/signup/cancel/${signupId}`,
     method: 'put',
@@ -18,7 +35,7 @@ export function cancelSignup(signupId: string) {
 }
 
 // 分页查询报名信息
-export function getSignupPage(params: any) {
+export function getSignupPage(params: any): Promise<ApiResponse<any>> {
   return request({
     url: '/signup/page',
     method: 'get',
@@ -27,7 +44,11 @@ export function getSignupPage(params: any) {
 }
 
 // 审核报名申请
-export function auditSignup(signupId: string, auditStatus: number, auditRemark?: string) {
+export function auditSignup(
+  signupId: string,
+  auditStatus: number,
+  auditRemark?: string,
+): Promise<ApiResponse<any>> {
   return request({
     url: `/signup/audit/${signupId}`,
     method: 'put',
@@ -39,7 +60,10 @@ export function auditSignup(signupId: string, auditStatus: number, auditRemark?:
 }
 
 // 记录服务时长
-export function recordServiceHours(signupId: string, serviceHours: number) {
+export function recordServiceHours(
+  signupId: string,
+  serviceHours: number,
+): Promise<ApiResponse<any>> {
   return request({
     url: `/signup/service-hours/${signupId}`,
     method: 'put',
@@ -50,7 +74,7 @@ export function recordServiceHours(signupId: string, serviceHours: number) {
 }
 
 // 新增报名
-export function addSignup(data: any) {
+export function addSignup(data: ActivitySignupData): Promise<ApiResponse<any>> {
   return request({
     url: '/signup',
     method: 'post',
@@ -59,7 +83,7 @@ export function addSignup(data: any) {
 }
 
 // 修改报名
-export function updateSignup(signupId: string, data: any) {
+export function updateSignup(signupId: string, data: any): Promise<ApiResponse<any>> {
   return request({
     url: `/signup/${signupId}`,
     method: 'put',
@@ -68,7 +92,7 @@ export function updateSignup(signupId: string, data: any) {
 }
 
 // 删除报名
-export function deleteSignup(signupId: string) {
+export function deleteSignup(signupId: string): Promise<ApiResponse<any>> {
   return request({
     url: `/signup/${signupId}`,
     method: 'delete',

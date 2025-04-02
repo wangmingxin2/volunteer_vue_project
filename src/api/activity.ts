@@ -95,3 +95,11 @@ export function approveSignup(signupId: string | number) {
     method: 'put',
   })
 }
+
+// 添加获取所有活动的方法
+export function getAllActivities() {
+  return request({
+    url: '/activity',
+    method: 'get',
+  })
+}

@@ -12,7 +12,7 @@
         <span class="title">志愿者服务网</span>
       </div>
       <el-menu-item index="/">首页</el-menu-item>
-      <el-menu-item index="/projects">项目</el-menu-item>
+      <el-menu-item index="/activity">活动列表</el-menu-item>
       <el-menu-item index="/organizations">组织</el-menu-item>
       <el-button type="primary" class="auth-btn" @click="$router.push('/login')">登录</el-button>
       <el-button class="auth-btn" @click="$router.push('/register')">注册</el-button>

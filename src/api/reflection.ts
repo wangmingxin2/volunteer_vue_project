@@ -114,3 +114,13 @@ export function uploadImage(file: File): Promise<ApiResponse<string>> {
     },
   })
 }
+
+// 添加获取用户已提交心得的活动列表接口
+export function getUserSubmittedActivityIds(
+  userId: number | string,
+): Promise<ApiResponse<number[]>> {
+  return request({
+    url: `/reflection/submitted-activities/${userId}`,
+    method: 'get',
+  })
+}

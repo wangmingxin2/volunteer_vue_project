@@ -42,6 +42,7 @@ service.interceptors.response.use(
         handleUnauthorized()
       }
 
+      // 直接返回错误信息，以便在业务代码中捕获并处理
       return Promise.reject(new Error(res.message || '请求失败'))
     } else {
       return res // 直接返回响应数据，而不是整个 response 对象
@@ -53,6 +54,14 @@ service.interceptors.response.use(
     // 处理 401 未授权错误
     if (error.response && error.response.status === 401) {
       handleUnauthorized()
+    }
+
+    // 检查是否有响应数据
+    if (error.response && error.response.data) {
+      const { code, message } = error.response.data
+      if (message) {
+        return Promise.reject(new Error(message))
+      }
     }
 
     return Promise.reject(error)

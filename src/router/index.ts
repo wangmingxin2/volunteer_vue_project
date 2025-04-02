@@ -21,14 +21,16 @@ const router = createRouter({
           component: Home,
         },
         {
-          path: 'projects',
-          name: 'projects',
-          component: () => import('../views/Projects.vue'),
-        },
-        {
           path: 'organizations',
           name: 'organizations',
           component: () => import('../views/Organizations.vue'),
+          meta: { title: '志愿服务组织' },
+        },
+        {
+          path: 'activity',
+          name: 'activity',
+          component: () => import('../views/Activities.vue'),
+          meta: { title: '志愿活动列表' },
         },
       ],
     },

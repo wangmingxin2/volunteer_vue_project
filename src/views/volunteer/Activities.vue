@@ -200,13 +200,72 @@
           >
             取消报名
           </el-button>
-          <el-button
-            v-if="currentActivity.serviceHours > 0"
-            type="primary"
-            @click="viewFeedback(currentActivity)"
+        </span>
+      </template>
+    </el-dialog>
+
+    <!-- 心得体会对话框 -->
+    <el-dialog v-model="reflectionVisible" title="提交心得体会" width="700px">
+      <el-form
+        ref="reflectionFormRef"
+        :model="reflectionForm"
+        :rules="reflectionRules"
+        label-width="100px"
+      >
+        <el-form-item label="心得标题" prop="title">
+          <el-input v-model="reflectionForm.title" placeholder="请输入心得标题" />
+        </el-form-item>
+        <el-form-item label="心得内容" prop="content">
+          <el-input
+            v-model="reflectionForm.content"
+            type="textarea"
+            :rows="8"
+            placeholder="请分享您的活动体验和感受..."
+          />
+        </el-form-item>
+        <el-form-item label="图片上传">
+          <div class="image-upload-container">
+            <div
+              v-if="reflectionForm.images && reflectionForm.images.trim() !== ''"
+              class="image-preview"
+            >
+              <el-image
+                :src="reflectionForm.images"
+                style="width: 100px; height: 100px; margin-right: 10px"
+                fit="cover"
+                :preview-src-list="[reflectionForm.images]"
+              />
+              <el-button type="danger" size="small" @click="reflectionForm.images = ''"
+                >删除图片</el-button
+              >
+            </div>
+            <div v-else class="upload-area">
+              <el-upload
+                ref="uploadRef"
+                action="#"
+                :auto-upload="false"
+                :show-file-list="false"
+                :multiple="false"
+                :on-change="handleFileChange"
+                accept="image/jpeg,image/png"
+                class="image-uploader"
+              >
+                <el-button type="primary">
+                  <el-icon><Plus /></el-icon>
+                  上传图片
+                </el-button>
+                <div class="el-upload__tip">仅支持jpg、png格式，单张不超过2MB</div>
+              </el-upload>
+            </div>
+          </div>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="reflectionVisible = false">取消</el-button>
+          <el-button type="primary" :loading="submitLoading" @click="submitReflection"
+            >提交</el-button
           >
-            心得体会
-          </el-button>
         </span>
       </template>
     </el-dialog>
@@ -218,9 +277,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getUserSignups, cancelSignup } from '../../api/signup'
 import { formatDate } from '../../utils/format'
+import { addReflection, uploadImage, type ApiResponse } from '../../api/reflection'
+import { Plus } from '@element-plus/icons-vue'
+import type { FormInstance } from 'element-plus'
 
 // 用户ID
-const userId = localStorage.getItem('userId')
+const userId = localStorage.getItem('userId') || ''
 
 // 表格数据
 const signupList = ref([])
@@ -261,6 +323,33 @@ const currentActivity = ref({
   updatedBy: '',
   updatedTime: '',
 })
+
+// 心得体会相关
+const reflectionVisible = ref(false)
+const reflectionFormRef = ref<FormInstance>()
+const submitLoading = ref(false)
+const uploadRef = ref<any>()
+
+// 初始化心得表单
+const reflectionForm = reactive({
+  userId: Number(userId),
+  activityId: '',
+  title: '',
+  content: '',
+  images: '',
+})
+
+// 表单验证规则
+const reflectionRules = {
+  title: [
+    { required: true, message: '请输入心得标题', trigger: 'blur' },
+    { min: 2, max: 50, message: '标题长度在2到50个字符之间', trigger: 'blur' },
+  ],
+  content: [
+    { required: true, message: '请输入心得内容', trigger: 'blur' },
+    { min: 10, max: 2000, message: '内容长度在10到2000个字符之间', trigger: 'blur' },
+  ],
+}
 
 // 获取报名列表
 const getSignupList = async () => {
@@ -336,15 +425,102 @@ const handleCancelSignup = async (row: any) => {
   }
 }
 
-// 查看心得体会
-const viewFeedback = (row: any) => {
-  ElMessage({
-    message: '心得体会功能开发中，敬请期待！',
-    type: 'info',
-  })
+// 文件上传处理
+const handleFileChange = (file: any) => {
+  handleUpload(file.raw)
 }
 
-onMounted(() => {
+const handleUpload = async (file: File) => {
+  // 验证文件类型
+  const isJPG = file.type === 'image/jpeg'
+  const isPNG = file.type === 'image/png'
+  if (!isJPG && !isPNG) {
+    ElMessage.error('上传图片只能是 JPG 或 PNG 格式!')
+    return
+  }
+
+  // 验证文件大小（不超过2MB）
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isLt2M) {
+    ElMessage.error('上传图片大小不能超过 2MB!')
+    return
+  }
+
+  try {
+    // 调用上传接口
+    submitLoading.value = true
+    const response: ApiResponse<string> = await uploadImage(file)
+    if (response && response.code === 200) {
+      reflectionForm.images = response.data
+      ElMessage.success('图片上传成功')
+    } else {
+      ElMessage.error(response?.message || '图片上传失败')
+    }
+  } catch (error) {
+    console.error('上传图片出错:', error)
+    ElMessage.error('图片上传失败，请稍后重试')
+  } finally {
+    submitLoading.value = false
+  }
+}
+
+// 查看心得体会
+const viewFeedback = (row: any) => {
+  // 初始化表单数据
+  reflectionForm.activityId = row.activityId
+  reflectionForm.title = `${row.activityName}活动心得`
+  reflectionForm.content = ''
+  reflectionForm.images = ''
+
+  // 显示对话框
+  reflectionVisible.value = true
+}
+
+// 提交心得体会
+const submitReflection = async () => {
+  if (!reflectionFormRef.value) return
+
+  try {
+    await reflectionFormRef.value.validate()
+
+    submitLoading.value = true
+    const reflectionData = {
+      userId: Number(userId),
+      activityId: Number(reflectionForm.activityId),
+      title: reflectionForm.title,
+      content: reflectionForm.content,
+      images: reflectionForm.images.trim(),
+    }
+
+    try {
+      const res: ApiResponse = await addReflection(reflectionData)
+
+      if (res.code === 200) {
+        ElMessage.success('心得体会提交成功')
+        reflectionVisible.value = false
+        // 可以选择是否刷新列表
+        getSignupList()
+      } else {
+        ElMessage.error(res.message || '提交失败')
+      }
+    } catch (error: any) {
+      // 处理特定的错误信息，例如已提交心得的情况
+      if (error.message && error.message.includes('已提交')) {
+        ElMessage.warning(error.message || '您已提交过该活动的心得体会')
+      } else {
+        ElMessage.error(error.message || '提交失败，请稍后重试')
+      }
+      console.error('提交心得体会失败:', error)
+    }
+  } catch (validationError) {
+    console.error('表单验证失败:', validationError)
+    ElMessage.error('提交失败，请检查表单内容')
+  } finally {
+    submitLoading.value = false
+  }
+}
+
+onMounted(async () => {
   getSignupList()
 })
 </script>
@@ -394,5 +570,24 @@ onMounted(() => {
   max-width: 100%;
   max-height: 300px;
   border-radius: 4px;
+}
+
+.image-upload-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.image-preview {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.upload-area {
+  margin-top: 10px;
+}
+
+.image-uploader {
+  width: 100%;
 }
 </style>

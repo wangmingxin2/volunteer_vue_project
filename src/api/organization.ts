@@ -1,4 +1,5 @@
 import request from './request'
+import type { ApiResponse } from './signup'
 
 export interface Organization {
   orgId: number
@@ -17,9 +18,10 @@ export interface Organization {
   createdTime: string
   updatedBy: string | null
   updatedTime: string
+  activityCount?: number
 }
 
-export function getTopOrganizations() {
+export function getTopOrganizations(): Promise<ApiResponse<Organization[]>> {
   return request({
     url: '/organize/top5',
     method: 'get',
@@ -27,7 +29,9 @@ export function getTopOrganizations() {
 }
 
 // 获取组织列表
-export function getOrganizationList(params: any) {
+export function getOrganizationList(
+  params: any,
+): Promise<ApiResponse<{ records: Organization[]; total: number }>> {
   return request({
     url: '/organize/page',
     method: 'get',
@@ -36,7 +40,7 @@ export function getOrganizationList(params: any) {
 }
 
 // 新增组织
-export function addOrganization(data: any) {
+export function addOrganization(data: any): Promise<ApiResponse<any>> {
   return request({
     url: '/organize',
     method: 'post',
@@ -45,7 +49,7 @@ export function addOrganization(data: any) {
 }
 
 // 更新组织
-export function updateOrganization(data: any) {
+export function updateOrganization(data: any): Promise<ApiResponse<any>> {
   return request({
     url: `/organize/${data.orgId}`,
     method: 'put',
@@ -54,7 +58,7 @@ export function updateOrganization(data: any) {
 }
 
 // 删除组织
-export function deleteOrganization(orgId: string) {
+export function deleteOrganization(orgId: string): Promise<ApiResponse<any>> {
   return request({
     url: `/organize/${orgId}`,
     method: 'delete',
@@ -62,7 +66,10 @@ export function deleteOrganization(orgId: string) {
 }
 
 // 修改组织状态
-export function updateOrganizationStatus(orgId: string | number, status: number) {
+export function updateOrganizationStatus(
+  orgId: string | number,
+  status: number,
+): Promise<ApiResponse<any>> {
   return request({
     url: '/organize/status',
     method: 'put',
@@ -71,7 +78,7 @@ export function updateOrganizationStatus(orgId: string | number, status: number)
 }
 
 // 根据管理者ID获取组织信息
-export function getOrgByManagerId(managerId: string) {
+export function getOrgByManagerId(managerId: string): Promise<ApiResponse<Organization>> {
   return request({
     url: `/organize/manager/${managerId}`,
     method: 'get',
@@ -79,10 +86,18 @@ export function getOrgByManagerId(managerId: string) {
 }
 
 // 根据组织ID更新组织信息
-export function updateOrgById(id: string | number, data: any) {
+export function updateOrgById(id: string | number, data: any): Promise<ApiResponse<any>> {
   return request({
     url: `/organize/${id}`,
     method: 'put',
     data,
+  })
+}
+
+// 获取所有组织列表
+export function getAllOrganizations(): Promise<ApiResponse<Organization[]>> {
+  return request({
+    url: '/organize',
+    method: 'get',
   })
 }
