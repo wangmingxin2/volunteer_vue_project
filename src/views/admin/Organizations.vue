@@ -80,7 +80,11 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createdTime" min-width="160" />
+        <el-table-column label="创建时间" prop="createdTime" min-width="160">
+          <template #default="{ row }">
+            {{ formatTableDate(row.createdTime) }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="200" align="center">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
@@ -207,7 +211,7 @@
           {{ detailInfo.address || '未设置' }}
         </el-descriptions-item>
         <el-descriptions-item label="成立日期">
-          {{ formatDate(detailInfo.establishmentDate) }}
+          {{ formatTableDate(detailInfo.establishmentDate) }}
         </el-descriptions-item>
         <el-descriptions-item label="志愿者数量">
           {{ detailInfo.count || 0 }}
@@ -218,10 +222,10 @@
           </el-tag>
         </el-descriptions-item>
         <el-descriptions-item label="创建时间">
-          {{ detailInfo.createdTime }}
+          {{ formatTableDate(detailInfo.createdTime) }}
         </el-descriptions-item>
         <el-descriptions-item label="更新时间">
-          {{ detailInfo.updatedTime }}
+          {{ formatTableDate(detailInfo.updatedTime) }}
         </el-descriptions-item>
       </el-descriptions>
     </el-dialog>
@@ -241,6 +245,7 @@ import {
   deleteOrganization,
 } from '../../api/organization'
 import type { Organization } from '../../api/organization'
+import { formatTableDate } from '../../utils/format'
 
 // 默认Logo
 const defaultLogo = 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
@@ -432,12 +437,6 @@ const previewLogo = (url: string) => {
   if (!url) return
   previewImageUrl.value = url
   logoPreviewVisible.value = true
-}
-
-// 格式化日期
-const formatDate = (date: string | null | undefined) => {
-  if (!date) return '未设置'
-  return new Date(date).toLocaleDateString()
 }
 
 // 提交表单

@@ -87,7 +87,11 @@
             />
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createdTime" min-width="160" />
+        <el-table-column label="创建时间" prop="createdTime" min-width="160">
+          <template #default="{ row }">
+            {{ formatTableDate(row.createdTime) }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="150" align="center">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
@@ -196,6 +200,7 @@ import {
   updateBannerStatus,
 } from '../../api/banner'
 import type { Banner } from '../../api/banner'
+import { formatTableDate } from '../../utils/format'
 
 // 查询参数
 const queryParams = reactive({

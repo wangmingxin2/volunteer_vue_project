@@ -94,8 +94,16 @@
             </el-button>
           </template>
         </el-table-column>
-        <el-table-column label="创建时间" prop="createdTime" min-width="160" />
-        <el-table-column label="更新时间" prop="updatedTime" min-width="160" />
+        <el-table-column label="创建时间" prop="createdTime" min-width="160">
+          <template #default="{ row }">
+            {{ formatTableDate(row.createdTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="更新时间" prop="updatedTime" min-width="160">
+          <template #default="{ row }">
+            {{ formatTableDate(row.updatedTime) }}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="200" align="center">
           <template #default="{ row }">
             <el-button type="primary" link @click="handleEdit(row)">编辑</el-button>
@@ -215,6 +223,7 @@ import {
   deleteAnnouncement,
 } from '../../api/announcement'
 import type { Announcement } from '../../api/announcement'
+import { formatTableDate } from '../../utils/format'
 
 // 查询参数
 const queryParams = reactive({
@@ -505,8 +514,7 @@ const submitForm = async () => {
 // 格式化日期时间
 const formatDateTime = (dateTime: string) => {
   if (!dateTime) return ''
-  const date = new Date(dateTime)
-  return date.toLocaleString()
+  return formatTableDate(dateTime)
 }
 
 onMounted(() => {
@@ -556,9 +564,9 @@ onMounted(() => {
   justify-content: center;
 }
 
-.cover-uploader {
+.avatar-uploader {
   width: 200px;
-  height: 120px;
+  height: 200px;
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
@@ -566,29 +574,32 @@ onMounted(() => {
   overflow: hidden;
   transition: border-color 0.3s;
   text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.cover-uploader:hover {
+.avatar-uploader:hover {
   border-color: #409eff;
 }
 
-.cover-uploader-icon {
+.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 200px;
-  height: 120px;
-  line-height: 120px;
+  width: 100%;
+  height: 100%;
+  line-height: 200px;
   text-align: center;
 }
 
-.cover {
-  width: 200px;
-  height: 120px;
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   display: block;
-  object-fit: cover;
 }
 
-.cover-tip {
+.avatar-tip {
   font-size: 12px;
   color: #606266;
   margin-top: 5px;
