@@ -274,7 +274,7 @@ const previewImageUrl = ref('')
 
 // 上传头像的请求头
 const uploadHeaders = {
-  Authorization: `Bearer ${localStorage.getItem('satoken')}`,
+  satoken: `${localStorage.getItem('satoken')}`,
 }
 
 // 用户表单
